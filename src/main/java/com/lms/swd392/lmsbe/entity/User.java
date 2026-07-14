@@ -8,12 +8,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetailsService {
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
@@ -51,4 +54,8 @@ public class User {
     private String status;
 
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
+    }
 }

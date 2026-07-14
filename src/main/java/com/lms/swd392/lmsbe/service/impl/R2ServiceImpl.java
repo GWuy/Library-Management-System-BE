@@ -6,13 +6,13 @@ import com.lms.swd392.lmsbe.service.R2Service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import net.snowflake.client.jdbc.internal.software.amazon.awssdk.core.sync.RequestBody;
-import net.snowflake.client.jdbc.internal.software.amazon.awssdk.services.s3.S3Client;
-import net.snowflake.client.jdbc.internal.software.amazon.awssdk.services.s3.model.ObjectCannedACL;
-import net.snowflake.client.jdbc.internal.software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.UUID;
