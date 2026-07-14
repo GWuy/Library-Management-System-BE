@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/v2.0/01-add-avatar-url-to-users.yaml
   - include:
       file: db/changelog/v2.0/02-create-book-images-table.yaml
+  - include:
+      file: db/changelog/v3.0/01-set-id-auto-increment.yaml

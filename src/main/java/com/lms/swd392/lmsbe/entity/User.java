@@ -1,23 +1,20 @@
 package com.lms.swd392.lmsbe.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -52,5 +49,9 @@ public class User {
     @Size(max = 20)
     @Column(name = "status", length = 20)
     private String status;
+
+    @Size(max = 500)
+    @Column(name = "avatar_url", length = 500)
+    private String avatarUrl;
 
 }

@@ -1,9 +1,7 @@
 package com.lms.swd392.lmsbe.model.request;
 
 import com.lms.swd392.lmsbe.validation.UserValidation;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -11,19 +9,24 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegisterRequest {
-    @NotNull
+
+    @NotBlank(message = "Full name is required")
     String fullName;
-    @Email(message = "Invalid email")
-    @NotNull
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email is invalid")
+    @Pattern(regexp = UserValidation.EMAIL_REGEX, message = "Email is invalid")
     String email;
-    @NotNull
-    @Pattern(
-            regexp = UserValidation.VIET_NAM_PHONE_REGEX,
-            message = "Invalid phone number"
-    )
+
+    @NotBlank(message = "Phone is required")
+    @Pattern(regexp = UserValidation.VIET_NAM_PHONE_REGEX, message = "Phone number is invalid")
     String phone;
-    @NotNull
+
+    @NotBlank(message = "Username is required")
     String username;
-    @NotNull
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 32, message = "Password must be between 8 and 32 characters")
+    @Pattern(regexp = UserValidation.PASSWORD_REGEX, message = "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character")
     String password;
 }

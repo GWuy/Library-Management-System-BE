@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260714-3.0-1
+      author: g_wuy
+      changes:
+        - addAutoIncrement:
+            tableName: users
+            columnName: id
+            columnDataType: integer
+  - changeSet:
+      id: 20260714-3.0-2
+      author: g_wuy
+      changes:
+        - addAutoIncrement:
+            tableName: categories
+            columnName: id
+            columnDataType: integer
+  - changeSet:
+      id: 20260714-3.0-3
+      author: g_wuy
+      changes:
+        - addAutoIncrement:
+            tableName: books
+            columnName: id
+            columnDataType: integer
+  - changeSet:
+      id: 20260714-3.0-4
+      author: g_wuy
+      changes:
+        - addAutoIncrement:
+            tableName: borrow_requests
+            columnName: request_id
+            columnDataType: integer
+  - changeSet:
+      id: 20260714-3.0-5
+      author: g_wuy
+      changes:
+        - addAutoIncrement:
+            tableName: borrow_records
+            columnName: borrow_id
+            columnDataType: integer
+  - changeSet:
+      id: 20260714-3.0-6
+      author: g_wuy
+      changes:
+        - addAutoIncrement:
+            tableName: lost_book_reports
+            columnName: id
+            columnDataType: integer
+  - changeSet:
+      id: 20260714-3.0-7
+      author: g_wuy
+      changes:
+        - addAutoIncrement:
+            tableName: notifications
+            columnName: id
+            columnDataType: integer

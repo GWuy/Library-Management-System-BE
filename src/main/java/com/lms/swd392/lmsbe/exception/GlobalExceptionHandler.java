@@ -1,6 +1,7 @@
 package com.lms.swd392.lmsbe.exception;
 
 
+import com.lms.swd392.lmsbe.model.response.ApiResponse;
 import com.lms.swd392.lmsbe.model.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(
+    public ResponseEntity<ApiResponse<Void>> handleNotFound(
             ResourceNotFoundException ex,
             HttpServletRequest request) {
 
@@ -32,7 +33,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(
+    public ResponseEntity<ApiResponse<Void>> handleBadRequest(
             BadRequestException ex,
             HttpServletRequest request) {
 
@@ -44,7 +45,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorized(
+    public ResponseEntity<ApiResponse<Void>> handleUnauthorized(
             UnauthorizedException ex,
             HttpServletRequest request) {
 
@@ -56,7 +57,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(
+    public ResponseEntity<ApiResponse<Void>> handleValidation(
             MethodArgumentNotValidException ex,
             HttpServletRequest request) {
 
@@ -74,7 +75,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraint(
+    public ResponseEntity<ApiResponse<Void>> handleConstraint(
             ConstraintViolationException ex,
             HttpServletRequest request) {
 
@@ -86,7 +87,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(
+    public ResponseEntity<ApiResponse<Void>> handleException(
             Exception ex,
             HttpServletRequest request) {
 
@@ -99,16 +100,15 @@ public class GlobalExceptionHandler {
         );
     }
 
-    private ResponseEntity<ErrorResponse> buildResponse(
+    private ResponseEntity<ApiResponse<Void>> buildResponse(
             HttpStatus status,
             String message,
             String path) {
 
-        ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(status.value())
-                .error(status.getReasonPhrase())
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .success(false)
                 .message(message)
+                .timestamp(LocalDateTime.now())
                 .path(path)
                 .build();
 
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ErrorResponse> handleForbidden(
+    public ResponseEntity<ApiResponse<Void>> handleForbidden(
             ForbiddenException ex,
             HttpServletRequest request) {
 
@@ -128,7 +128,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(
+    public ResponseEntity<ApiResponse<Void>> handleConflict(
             ConflictException ex,
             HttpServletRequest request) {
 

@@ -42,15 +42,21 @@ public class R2ServiceImpl implements R2Service {
         }
 
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.matches("image/(png|jpeg|webp)")) {
+        if (contentType == null || !contentType.matches("image/(png|jpeg|jpg|webp)")) {
             throw new ConflictException(
                     "File must be image type"
             );
         }
 
         // 4. Build object key
+        String originalFilename = file.getOriginalFilename();
+        String extension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+        
         String fileKey = folderName + "/"
-                + UUID.randomUUID() + "-" + file.getOriginalFilename();
+                + UUID.randomUUID() + extension;
 
         try {
             // 5. Upload to R2
