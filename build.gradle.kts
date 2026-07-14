@@ -53,6 +53,8 @@ dependencies {
 
     testAnnotationProcessor("org.projectlombok:lombok")
     testAnnotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+    // Source: https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 }
 
 tasks.withType<Test> {
