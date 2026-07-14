@@ -49,5 +49,8 @@ public class Book {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Column(name = "description", length = Integer.MAX_VALUE)
+    private String description;
+
 
 }

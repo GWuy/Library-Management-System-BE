@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20241028-03
+      author: g_wuy
+      changes:
+        - addColumn:
+            tableName: books
+            columns:
+              - column:
+                  name: description
+                  type: TEXT
