@@ -3,13 +3,13 @@ package com.lms.swd392.lmsbe.constant;
 import lombok.Getter;
 
 @Getter
-public enum UserRole {
-    ADMIN("BORROWER"),
-    USER("STAFF");
+public enum UserStatus {
+    ACTIVE("ACTIVE"),
+    INACTIVE("INACTIVE");
 
     private final String value;
 
-    UserRole(String value) {
+    UserStatus(String value) {
         this.value = value;
     }
 }

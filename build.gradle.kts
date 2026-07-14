@@ -56,8 +56,7 @@ dependencies {
     testAnnotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
     // Source: https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    // Source: https://mvnrepository.com/artifact/net.snowflake/snowflake-jdbc
-    implementation("net.snowflake:snowflake-jdbc:4.3.1")
+    implementation("software.amazon.awssdk:s3:2.31.64")
 }
 
 tasks.withType<Test> {

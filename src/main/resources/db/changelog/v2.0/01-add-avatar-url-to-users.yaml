@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260714-2.0-1
+      author: g_wuy
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: avatar_url
+                  type: varchar(500)
