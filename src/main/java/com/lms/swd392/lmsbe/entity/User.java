@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 @Setter
 @Entity
 @Table(name = "users")
-public class User implements UserDetailsService {
+public class User {
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
@@ -53,9 +53,4 @@ public class User implements UserDetailsService {
     @Column(name = "status", length = 20)
     private String status;
 
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
 }
