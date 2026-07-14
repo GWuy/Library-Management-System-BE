@@ -74,3 +74,96 @@ The request consists of two parts:
     }
     ```
 ---
+
+### User Login
+
+- **Method:** `POST`
+- **Endpoint:** `/api/auth/login`
+- **Content-Type:** `application/json`
+
+This endpoint authenticates a user and returns an access token and a refresh token.
+
+#### Request Body (JSON)
+
+| Field      | Type   | Description                                                                                                   | Constraints                                                                                                                            |
+| :--------- | :----- | :------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `username` | String | The username of the user.                                                                                     | Required.                                                                                                                              |
+| `password` | String | The password for the account.                                                                                 | Required. |
+
+#### Responses
+
+-   **200 OK:** The user was successfully authenticated.
+
+    ```json
+    {
+      "success": true,
+      "message": "Login successfully",
+      "data": {
+        "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+        "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
+        "tokenType": "Bearer"
+      }
+    }
+    ```
+
+-   **401 Unauthorized:** Invalid username or password.
+
+---
+
+### Refresh Token
+
+- **Method:** `POST`
+- **Endpoint:** `/api/auth/refresh`
+- **Content-Type:** `application/json`
+
+This endpoint issues a new access token and a new refresh token using a valid refresh token.
+
+#### Request Body (JSON)
+
+| Field      | Type   | Description                                                                                                   | Constraints                                                                                                                            |
+| :--------- | :----- | :------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------- |
+| `refreshToken` | String | The refresh token previously issued.                                                                                     | Required.                                                                                                                              |
+
+#### Responses
+
+-   **200 OK:** The tokens were successfully refreshed.
+
+    ```json
+    {
+      "success": true,
+      "message": "Token refreshed successfully",
+      "data": {
+        "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+        "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
+        "tokenType": "Bearer"
+      }
+    }
+    ```
+
+-   **401 Unauthorized:** Invalid or expired refresh token.
+
+---
+
+### Logout
+
+- **Method:** `POST`
+- **Endpoint:** `/api/auth/logout`
+- **Authorization:** `Bearer <access_token>`
+
+This endpoint logs the user out by revoking all their refresh tokens. It requires an authenticated user (Bearer token must be provided in headers).
+
+#### Responses
+
+-   **200 OK:** The user was successfully logged out.
+
+    ```json
+    {
+      "success": true,
+      "message": "Logged out successfully",
+      "data": null
+    }
+    ```
+
+-   **401 Unauthorized:** Missing or invalid access token.
+
+---

@@ -42,6 +42,11 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
 
+        // /api/auth/logout requires JWT validation, so do NOT skip it
+        if (path.equals("/api/auth/logout")) {
+            return false;
+        }
+
         return path.startsWith("/api/auth/")
                 || path.startsWith("/swagger-ui/")
                 || path.startsWith("/v3/api-docs/")
