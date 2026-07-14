@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260714-3
+      author: g_wuy
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author
+                  type: varchar(255)
+              - column:
+                  name: publisher
+                  type: varchar(255)
+              - column:
+                  name: isbn
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+              - column:
+                  name: published_year
+                  type: integer
+              - column:
+                  name: quantity
+                  type: integer
+              - column:
+                  name: available_quantity
+                  type: integer
+              - column:
+                  name: status
+                  type: varchar(20)
+              - column:
+                  name: category_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: books_categoryid_fkey
+                    referencedTableName: categories
+                    referencedColumnNames: id

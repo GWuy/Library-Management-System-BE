@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260714-5
+      author: g_wuy
+      changes:
+        - createTable:
+            tableName: borrow_records
+            columns:
+              - column:
+                  name: borrow_id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: borrowrecord_pkey
+              - column:
+                  name: request_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: borrowrecord_requestid_fkey
+                    referencedTableName: borrow_requests
+                    referencedColumnNames: request_id
+              - column:
+                  name: borrower_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: borrowrecord_borrowerid_fkey
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: book_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: borrowrecord_bookid_fkey
+                    referencedTableName: books
+                    referencedColumnNames: id
+              - column:
+                  name: staff_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: borrowrecord_staffid_fkey
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: borrow_date
+                  type: timestamp
+              - column:
+                  name: due_date
+                  type: timestamp
+              - column:
+                  name: return_date
+                  type: timestamp
+              - column:
+                  name: status
+                  type: varchar(20)

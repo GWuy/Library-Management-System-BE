@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260714-7
+      author: g_wuy
+      changes:
+        - createTable:
+            tableName: notifications
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: notification_pkey
+              - column:
+                  name: borrow_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: notification_borrowid_fkey
+                    referencedTableName: borrow_records
+                    referencedColumnNames: borrow_id
+              - column:
+                  name: borrower_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: notification_borrowerid_fkey
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: type
+                  type: varchar(20)
+              - column:
+                  name: status
+                  type: varchar(20)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP

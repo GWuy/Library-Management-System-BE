@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260714-6
+      author: g_wuy
+      changes:
+        - createTable:
+            tableName: lost_book_reports
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: borrow_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: lost_book_reports_borrowid_fkey
+                    referencedTableName: borrow_records
+                    referencedColumnNames: borrow_id
+              - column:
+                  name: borrower_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: lost_book_reports_borrowerid_fkey
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: book_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: lost_book_reports_bookid_fkey
+                    referencedTableName: books
+                    referencedColumnNames: id
+              - column:
+                  name: staff_id
+                  type: integer
+                  constraints:
+                    foreignKeyName: lost_book_reports_staffid_fkey
+                    referencedTableName: users
+                    referencedColumnNames: id
+              - column:
+                  name: report_date
+                  type: timestamp
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: status
+                  type: varchar(20)
