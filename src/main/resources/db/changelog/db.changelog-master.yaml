@@ -23,3 +23,7 @@ databaseChangeLog:
       file: db/changelog/v3.0/02-create-refresh-tokens-table.yaml
   - include:
       file: db/changelog/v3.0/03-add-description-to-books-table.yaml
+  - include:
+      file: db/changelog/v4.0/01-change-book-category-relation-to-many-to-many.yaml
+  - include:
+      file: db/changelog/v4.0/02-category-data.yaml

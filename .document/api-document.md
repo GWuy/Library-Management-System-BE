@@ -75,95 +75,154 @@ The request consists of two parts:
     ```
 ---
 
-### User Login
+## Category API
 
-- **Method:** `POST`
-- **Endpoint:** `/api/auth/login`
-- **Content-Type:** `application/json`
+### Get all categories
 
-This endpoint authenticates a user and returns an access token and a refresh token.
+- **Method:** `GET`
+- **Endpoint:** `/api/categories`
 
-#### Request Body (JSON)
-
-| Field      | Type   | Description                                                                                                   | Constraints                                                                                                                            |
-| :--------- | :----- | :------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------- |
-| `username` | String | The username of the user.                                                                                     | Required.                                                                                                                              |
-| `password` | String | The password for the account.                                                                                 | Required. |
+This endpoint retrieves a list of all categories.
 
 #### Responses
 
--   **200 OK:** The user was successfully authenticated.
+-   **200 OK:** A list of categories was successfully retrieved.
 
     ```json
     {
-      "success": true,
-      "message": "Login successfully",
-      "data": {
-        "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-        "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
-        "tokenType": "Bearer"
+      "message": "Get all categories successfully",
+      "result": [
+        {
+          "id": 1,
+          "name": "Fiction"
+        },
+        {
+          "id": 2,
+          "name": "Non-Fiction"
+        }
+      ]
+    }
+    ```
+
+### Get category by ID
+
+- **Method:** `GET`
+- **Endpoint:** `/api/categories/{id}`
+
+This endpoint retrieves a single category by its ID.
+
+#### Parameters
+
+| Parameter | Type    | Description              |
+| :-------- | :------ | :----------------------- |
+| `id`      | Integer | The ID of the category. |
+
+#### Responses
+
+-   **200 OK:** The category was successfully retrieved.
+
+    ```json
+    {
+      "message": "Get category successfully",
+      "result": {
+        "id": 1,
+        "name": "Fiction"
       }
     }
     ```
 
--   **401 Unauthorized:** Invalid username or password.
+-   **404 Not Found:** The category with the specified ID was not found.
 
----
-
-### Refresh Token
+### Create a new category
 
 - **Method:** `POST`
-- **Endpoint:** `/api/auth/refresh`
+- **Endpoint:** `/api/categories`
 - **Content-Type:** `application/json`
 
-This endpoint issues a new access token and a new refresh token using a valid refresh token.
+This endpoint creates a new category.
 
 #### Request Body (JSON)
 
-| Field      | Type   | Description                                                                                                   | Constraints                                                                                                                            |
-| :--------- | :----- | :------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------- |
-| `refreshToken` | String | The refresh token previously issued.                                                                                     | Required.                                                                                                                              |
+| Field  | Type   | Description              |
+| :----- | :----- | :----------------------- |
+| `name` | String | The name of the category. |
 
 #### Responses
 
--   **200 OK:** The tokens were successfully refreshed.
+-   **201 Created:** The category was successfully created.
 
     ```json
     {
-      "success": true,
-      "message": "Token refreshed successfully",
-      "data": {
-        "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-        "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
-        "tokenType": "Bearer"
+      "message": "Category created successfully",
+      "result": {
+        "id": 3,
+        "name": "Science"
       }
     }
     ```
 
--   **401 Unauthorized:** Invalid or expired refresh token.
+-   **400 Bad Request:** The request is invalid (e.g., missing `name`).
 
----
+### Update a category
 
-### Logout
+- **Method:** `PUT`
+- **Endpoint:** `/api/categories/{id}`
+- **Content-Type:** `application/json`
 
-- **Method:** `POST`
-- **Endpoint:** `/api/auth/logout`
-- **Authorization:** `Bearer <access_token>`
+This endpoint updates an existing category.
 
-This endpoint logs the user out by revoking all their refresh tokens. It requires an authenticated user (Bearer token must be provided in headers).
+#### Parameters
+
+| Parameter | Type    | Description              |
+| :-------- | :------ | :----------------------- |
+| `id`      | Integer | The ID of the category. |
+
+#### Request Body (JSON)
+
+| Field  | Type   | Description              |
+| :----- | :----- | :----------------------- |
+| `name` | String | The new name of the category. |
 
 #### Responses
 
--   **200 OK:** The user was successfully logged out.
+-   **200 OK:** The category was successfully updated.
 
     ```json
     {
-      "success": true,
-      "message": "Logged out successfully",
-      "data": null
+      "message": "Category updated successfully",
+      "result": {
+        "id": 1,
+        "name": "Updated Fiction"
+      }
     }
     ```
 
--   **401 Unauthorized:** Missing or invalid access token.
+-   **400 Bad Request:** The request is invalid (e.g., missing `name`).
+-   **404 Not Found:** The category with the specified ID was not found.
 
+### Delete a category
+
+- **Method:** `DELETE`
+- **Endpoint:** `/api/categories/{id}`
+
+This endpoint deletes a category by its ID.
+
+#### Parameters
+
+| Parameter | Type    | Description              |
+| :-------- | :------ | :----------------------- |
+| `id`      | Integer | The ID of the category. |
+
+#### Responses
+
+-   **200 OK:** The category was successfully deleted.
+
+    ```json
+    {
+      "message": "Category deleted successfully",
+      "result": ""
+    }
+    ```
+
+-   **404 Not Found:** The category with the specified ID was not found.
 ---

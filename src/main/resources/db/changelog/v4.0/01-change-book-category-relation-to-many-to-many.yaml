@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260715-1
+      author: g_wuy
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: books
+            constraintName: books_categoryid_fkey
+        - dropColumn:
+            tableName: books
+            columnName: category_id
+        - createTable:
+            tableName: book_categories
+            columns:
+              - column:
+                  name: book_id
+                  type: integer
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: category_id
+                  type: integer
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+        - addForeignKeyConstraint:
+            baseTableName: book_categories
+            baseColumnNames: book_id
+            constraintName: fk_book_categories_book
+            referencedTableName: books
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: book_categories
+            baseColumnNames: category_id
+            constraintName: fk_book_categories_category
+            referencedTableName: categories
+            referencedColumnNames: id

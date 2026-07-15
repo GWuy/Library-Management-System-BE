@@ -1,0 +1,204 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed-categories-001
+      author: g_wuy
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Fiction
+              - column:
+                  name: description
+                  value: Stories created from imagination, including novels and short stories.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Non-Fiction
+              - column:
+                  name: description
+                  value: Books based on real events, facts, and knowledge.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Science Fiction
+              - column:
+                  name: description
+                  value: Futuristic stories featuring advanced technology and space exploration.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Fantasy
+              - column:
+                  name: description
+                  value: Stories involving magic, mythical creatures, and imaginary worlds.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Mystery
+              - column:
+                  name: description
+                  value: Stories focused on solving crimes, puzzles, or unexplained events.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Romance
+              - column:
+                  name: description
+                  value: Stories centered on love and emotional relationships.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Historical Fiction
+              - column:
+                  name: description
+                  value: Fiction inspired by historical events and settings.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Biography
+              - column:
+                  name: description
+                  value: The life story of a real person written by another author.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Self-Help
+              - column:
+                  name: description
+                  value: Books for personal growth, productivity, and self-improvement.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Business
+              - column:
+                  name: description
+                  value: Books about management, entrepreneurship, and finance.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Technology
+              - column:
+                  name: description
+                  value: Books covering software, hardware, AI, and digital innovation.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Computer Science
+              - column:
+                  name: description
+                  value: Books about programming, algorithms, and computing fundamentals.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Education
+              - column:
+                  name: description
+                  value: Learning resources and academic materials.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Psychology
+              - column:
+                  name: description
+                  value: Books about the human mind and behavior.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Health & Fitness
+              - column:
+                  name: description
+                  value: Books about wellness, nutrition, and exercise.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Science
+              - column:
+                  name: description
+                  value: Books covering natural and applied sciences.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Mathematics
+              - column:
+                  name: description
+                  value: Books on mathematics, statistics, and quantitative analysis.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Reference
+              - column:
+                  name: description
+                  value: Reference materials such as dictionaries and encyclopedias.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Children's Books
+              - column:
+                  name: description
+                  value: Books written for children of various age groups.
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Comics & Graphic Novels
+              - column:
+                  name: description
+                  value: Illustrated stories presented through sequential art.
