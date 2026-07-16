@@ -1,8 +1,6 @@
 package com.lms.swd392.lmsbe.exception;
 
-
 import com.lms.swd392.lmsbe.model.response.ApiResponse;
-import com.lms.swd392.lmsbe.model.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
