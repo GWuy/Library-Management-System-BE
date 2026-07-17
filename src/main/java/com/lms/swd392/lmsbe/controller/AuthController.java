@@ -46,7 +46,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<LoginResponse>> login(
             @RequestBody @Valid LoginRequest request
     ) {
-        LoginResponse response = authService.login(request);
+        LoginResponse response = authService.authenticate(request);
         return ResponseEntity.ok(ApiResponse.success("Login successfully", response));
     }
 

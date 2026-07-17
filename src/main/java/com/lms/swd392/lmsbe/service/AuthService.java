@@ -5,6 +5,8 @@ import com.lms.swd392.lmsbe.model.request.RefreshTokenRequest;
 import com.lms.swd392.lmsbe.model.response.LoginResponse;
 
 public interface AuthService {
+    LoginResponse authenticate(LoginRequest request);
+
     LoginResponse login(LoginRequest request);
 
     LoginResponse refreshToken(RefreshTokenRequest request);

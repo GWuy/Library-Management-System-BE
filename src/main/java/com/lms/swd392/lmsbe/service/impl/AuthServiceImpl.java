@@ -1,13 +1,17 @@
 package com.lms.swd392.lmsbe.service.impl;
 
+import com.lms.swd392.lmsbe.constant.UserStatus;
 import com.lms.swd392.lmsbe.entity.RefreshToken;
 import com.lms.swd392.lmsbe.entity.User;
+import com.lms.swd392.lmsbe.exception.AccountDisabledException;
+import com.lms.swd392.lmsbe.exception.InvalidCredentialsException;
 import com.lms.swd392.lmsbe.exception.UnauthorizedException;
 import com.lms.swd392.lmsbe.mapper.UserMapper;
 import com.lms.swd392.lmsbe.model.request.LoginRequest;
 import com.lms.swd392.lmsbe.model.request.RefreshTokenRequest;
 import com.lms.swd392.lmsbe.model.response.LoginResponse;
 import com.lms.swd392.lmsbe.repository.RefreshTokenRepository;
+import com.lms.swd392.lmsbe.repository.UserRepository;
 import com.lms.swd392.lmsbe.service.AuthService;
 import com.lms.swd392.lmsbe.service.JwtService;
 import com.lms.swd392.lmsbe.service.UserService;
@@ -21,6 +25,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,33 +41,35 @@ import java.util.HexFormat;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthServiceImpl implements AuthService {
 
-    AuthenticationManager authenticationManager;
-    UserDetailsService userDetailsService;
     JwtService jwtService;
     RefreshTokenRepository refreshTokenRepository;
+    UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
     UserService userService;
     UserMapper userMapper;
 
     @Override
     @Transactional
-    public LoginResponse login(LoginRequest request) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
-                            request.getPassword()
-                    )
-            );
-        } catch (BadCredentialsException ex) {
-            throw new UnauthorizedException("Invalid username or password");
+    public LoginResponse authenticate(LoginRequest request) {
+        // 5. AuthService finds user by username
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
+
+        // 7. Verify password using BCryptPasswordEncoder.matches()
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        User user = userService.findByUsername(request.getUsername());
+        // 8. Only ACTIVE users can log in
+        if (!UserStatus.ACTIVE.getValue().equals(user.getStatus())) {
+            throw new AccountDisabledException("Account is disabled");
+        }
 
+        // 10. Generate tokens
         String accessToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-        // Save hashed refresh token to DB
+        // Optional: Save/update refresh token in DB if required by existing logic
         saveRefreshToken(refreshToken, user.getUsername());
 
         return LoginResponse.builder()
@@ -71,6 +78,11 @@ public class AuthServiceImpl implements AuthService {
                 .expiresIn(jwtService.getJwtExpiration())
                 .user(userMapper.toUserResponse(user))
                 .build();
+    }
+    @Override
+    @Transactional
+    public LoginResponse login(LoginRequest request) {
+        return authenticate(request);
     }
 
     @Override
