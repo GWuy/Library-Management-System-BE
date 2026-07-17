@@ -6,4 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
     User register(RegisterRequest registerRequest, MultipartFile avatarFile);
+    User findByUsername(String username);
+    User findById(Integer id);
 }

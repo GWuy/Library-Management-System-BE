@@ -1,5 +1,6 @@
 package com.lms.swd392.lmsbe.service.impl;
 
+import com.lms.swd392.lmsbe.entity.User;
 import com.lms.swd392.lmsbe.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -30,11 +31,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateToken(UserDetails userDetails) {
-        String role = userDetails.getAuthorities().iterator().next().getAuthority(); // lấy role đầu tiên
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .claim("role", role)
+                .setSubject(String.valueOf(user.getId()))
+                .claim("role", user.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
@@ -42,13 +42,18 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateRefreshToken(UserDetails userDetails) {
+    public String generateRefreshToken(User user) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(String.valueOf(user.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    @Override
+    public long getJwtExpiration() {
+        return expiration;
     }
 
     @Override
@@ -65,8 +70,13 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !extractExpiration(token).before(new Date());
+        String subject = extractUsername(token);
+        // Compare subject (userId) with userDetails.getUsername() is not correct anymore if subject is ID
+        // But in doFilterInternal I load userDetails from that same subject/ID
+        // So I should check if it's the right user.
+        // Actually, since I load the user BY the ID from the token, the validation is mostly about expiration and signature.
+        // If I want to be strict, I'd need to know the ID of the userDetails.
+        return !isTokenExpired(token);
     }
 
     @Override

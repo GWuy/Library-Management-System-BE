@@ -4,6 +4,7 @@ import com.lms.swd392.lmsbe.constant.UserRole;
 import com.lms.swd392.lmsbe.constant.UserStatus;
 import com.lms.swd392.lmsbe.entity.User;
 import com.lms.swd392.lmsbe.exception.ConflictException;
+import com.lms.swd392.lmsbe.exception.ResourceNotFoundException;
 import com.lms.swd392.lmsbe.mapper.UserMapper;
 import com.lms.swd392.lmsbe.model.request.RegisterRequest;
 import com.lms.swd392.lmsbe.repository.UserRepository;
@@ -55,6 +56,21 @@ public class UserServiceImpl implements UserService {
 
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        User user = userRepository.findUserByUsername(username);
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found with username: " + username);
+        }
+        return user;
+    }
+
+    @Override
+    public User findById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     private void validateUserUniqueness(RegisterRequest request) {

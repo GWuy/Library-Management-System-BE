@@ -2,7 +2,9 @@ package com.lms.swd392.lmsbe.configuration;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lms.swd392.lmsbe.entity.User;
 import com.lms.swd392.lmsbe.service.JwtService;
+import com.lms.swd392.lmsbe.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -19,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,7 +36,7 @@ import java.util.Map;
 public class JwtAuthentificationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -71,13 +72,19 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
 
         try {
 
-            String username = jwtService.extractUsername(token);
+            String subject = jwtService.extractUsername(token);
 
-            if (username != null
+            if (subject != null
                     && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                UserDetails userDetails =
-                        userDetailsService.loadUserByUsername(username);
+                Integer userId = Integer.parseInt(subject);
+                User user = userService.findById(userId);
+
+                UserDetails userDetails = org.springframework.security.core.userdetails.User
+                        .withUsername(user.getUsername())
+                        .password(user.getPassword())
+                        .roles(user.getRole())
+                        .build();
 
                 if (jwtService.isTokenValid(token, userDetails)) {
 

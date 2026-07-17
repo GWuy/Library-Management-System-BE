@@ -1,13 +1,16 @@
 package com.lms.swd392.lmsbe.service.impl;
 
 import com.lms.swd392.lmsbe.entity.RefreshToken;
+import com.lms.swd392.lmsbe.entity.User;
 import com.lms.swd392.lmsbe.exception.UnauthorizedException;
+import com.lms.swd392.lmsbe.mapper.UserMapper;
 import com.lms.swd392.lmsbe.model.request.LoginRequest;
 import com.lms.swd392.lmsbe.model.request.RefreshTokenRequest;
 import com.lms.swd392.lmsbe.model.response.LoginResponse;
 import com.lms.swd392.lmsbe.repository.RefreshTokenRepository;
 import com.lms.swd392.lmsbe.service.AuthService;
 import com.lms.swd392.lmsbe.service.JwtService;
+import com.lms.swd392.lmsbe.service.UserService;
 import io.jsonwebtoken.JwtException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,8 @@ public class AuthServiceImpl implements AuthService {
     UserDetailsService userDetailsService;
     JwtService jwtService;
     RefreshTokenRepository refreshTokenRepository;
+    UserService userService;
+    UserMapper userMapper;
 
     @Override
     @Transactional
@@ -52,17 +57,19 @@ public class AuthServiceImpl implements AuthService {
             throw new UnauthorizedException("Invalid username or password");
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        User user = userService.findByUsername(request.getUsername());
 
-        String accessToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateRefreshToken(userDetails);
+        String accessToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         // Save hashed refresh token to DB
-        saveRefreshToken(refreshToken, userDetails.getUsername());
+        saveRefreshToken(refreshToken, user.getUsername());
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .expiresIn(jwtService.getJwtExpiration())
+                .user(userMapper.toUserResponse(user))
                 .build();
     }
 
@@ -71,10 +78,10 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse refreshToken(RefreshTokenRequest request) {
         String rawRefreshToken = request.getRefreshToken();
 
-        // Validate JWT signature and extract username
-        String username;
+        // Validate JWT signature and extract subject (which is userId)
+        String subject;
         try {
-            username = jwtService.extractUsername(rawRefreshToken);
+            subject = jwtService.extractUsername(rawRefreshToken);
         } catch (JwtException ex) {
             throw new UnauthorizedException("Invalid refresh token");
         }
@@ -82,6 +89,8 @@ public class AuthServiceImpl implements AuthService {
         if (jwtService.isTokenExpired(rawRefreshToken)) {
             throw new UnauthorizedException("Refresh token has expired");
         }
+
+        Integer userId = Integer.parseInt(subject);
 
         // Find the hashed token in DB (must not be revoked)
         String tokenHash = hashToken(rawRefreshToken);
@@ -101,16 +110,18 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRepository.save(storedToken);
 
         // Generate new tokens
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        String newAccessToken = jwtService.generateToken(userDetails);
-        String newRefreshToken = jwtService.generateRefreshToken(userDetails);
+        User user = userService.findById(userId);
+        String newAccessToken = jwtService.generateToken(user);
+        String newRefreshToken = jwtService.generateRefreshToken(user);
 
         // Save new refresh token
-        saveRefreshToken(newRefreshToken, username);
+        saveRefreshToken(newRefreshToken, user.getUsername());
 
         return LoginResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
+                .expiresIn(jwtService.getJwtExpiration())
+                .user(userMapper.toUserResponse(user))
                 .build();
     }
 

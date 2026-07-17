@@ -3,6 +3,7 @@ package com.lms.swd392.lmsbe.mapper;
 import com.lms.swd392.lmsbe.entity.User;
 import com.lms.swd392.lmsbe.model.request.RegisterRequest;
 import com.lms.swd392.lmsbe.model.response.RegisterResponse;
+import com.lms.swd392.lmsbe.model.response.UserResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -16,4 +17,6 @@ public interface UserMapper {
     User toUser(RegisterRequest request);
 
     RegisterResponse toRegisterResponse(User user);
+
+    UserResponse toUserResponse(User user);
 }
