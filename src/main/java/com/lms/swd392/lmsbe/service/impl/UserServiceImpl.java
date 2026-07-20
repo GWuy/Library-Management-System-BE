@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -71,6 +73,57 @@ public class UserServiceImpl implements UserService {
     public User findById(Integer id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public void updateStatus(Integer id, String status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        
+        // Validate status
+        boolean validStatus = false;
+        for (UserStatus s : UserStatus.values()) {
+            if (s.getValue().equals(status)) {
+                validStatus = true;
+                break;
+            }
+        }
+        
+        if (!validStatus) {
+            throw new com.lms.swd392.lmsbe.exception.BadRequestException("Invalid user status: " + status);
+        }
+
+        user.setStatus(status);
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void updateRole(Integer id, String role) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+        // Validate role
+        boolean validRole = false;
+        for (UserRole r : UserRole.values()) {
+            if (r.getValue().equals(role)) {
+                validRole = true;
+                break;
+            }
+        }
+
+        if (!validRole) {
+            throw new com.lms.swd392.lmsbe.exception.BadRequestException("Invalid user role: " + role);
+        }
+
+        user.setRole(role);
+        userRepository.save(user);
     }
 
     private void validateUserUniqueness(RegisterRequest request) {

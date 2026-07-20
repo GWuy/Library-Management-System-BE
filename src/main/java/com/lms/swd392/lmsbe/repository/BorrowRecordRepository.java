@@ -10,6 +10,8 @@ public interface BorrowRecordRepository extends JpaRepository<BorrowRecord, Inte
 
     List<BorrowRecord> findByStatusOrderByBorrowDateDesc(String status);
 
+    List<BorrowRecord> findByStatusIn(List<String> statuses);
+
     Optional<BorrowRecord> findByBorrower_IdAndBook_IdAndStatus(Integer borrowerId, Integer bookId, String status);
 
     Optional<BorrowRecord> findByIdAndBorrower_Id(Integer borrowId, Integer borrowerId);

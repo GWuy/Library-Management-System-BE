@@ -597,6 +597,37 @@ Process the return of a borrowed book.
       "path": "/api/borrow-records/1/return"
     }
     ```
+
+### Get current borrowers (Staff only)
+
+- **Method:** `GET`
+- **Endpoint:** `/api/borrow-records/current`
+
+Retrieve a list of all current borrow records (status BORROWING or OVERDUE).
+
+#### Responses
+
+-   **200 OK:** Successfully retrieved current borrowers.
+
+    ```json
+    {
+      "success": true,
+      "message": "Get current borrowers successfully",
+      "data": [
+        {
+          "id": 1,
+          "borrowerId": 1,
+          "borrowerName": "John Doe",
+          "bookId": 1,
+          "bookTitle": "Clean Code",
+          "borrowDate": "2023-10-27T10:00:00Z",
+          "dueDate": "2023-11-10T10:00:00Z",
+          "returnDate": null,
+          "status": "BORROWING"
+        }
+      ]
+    }
+    ```
 ---
 
 ## Borrow Request API
@@ -743,4 +774,152 @@ This endpoint allows a borrower to report a borrowed book as lost.
 
 -   **404 Not Found:** Borrow record not found for the current user.
 
+### Get all lost book reports (Staff only)
+
+- **Method:** `GET`
+- **Endpoint:** `/api/lost-book-reports`
+
+Retrieve a list of all lost book reports.
+
+#### Responses
+
+-   **200 OK:** Successfully retrieved lost book reports.
+
+    ```json
+    {
+      "success": true,
+      "message": "Get all lost book reports successfully",
+      "data": [
+        {
+          "id": 1,
+          "borrowId": 1,
+          "bookTitle": "Clean Code",
+          "borrowerName": "John Doe",
+          "status": "PENDING",
+          "description": "Lost in a bus",
+          "reportDate": "2023-10-27T10:00:00Z"
+        }
+      ]
+    }
+    ```
+
+### Update lost book report status (Staff only)
+
+- **Method:** `PUT`
+- **Endpoint:** `/api/lost-book-reports/{id}/status`
+
+Update the status of a lost book report (e.g., to PROCESSING or RESOLVED).
+
+#### Parameters
+
+| Parameter | Type    | Description                                  |
+| :-------- | :------ | :------------------------------------------- |
+| `id`      | Integer | The ID of the lost book report.              |
+| `status`  | String  | The new status (PENDING, PROCESSING, RESOLVED). |
+
+#### Responses
+
+-   **200 OK:** Status updated successfully.
+
+    ```json
+    {
+      "success": true,
+      "message": "Lost book report status updated successfully",
+      "data": null
+    }
+    ```
+
+-   **400 Bad Request:** Invalid status.
+-   **404 Not Found:** Report or staff not found.
+
 ---
+
+## User Management API
+
+### Get all users
+
+- **Method:** `GET`
+- **Endpoint:** `/api/users`
+
+Retrieve a list of all users in the system.
+
+#### Responses
+
+-   **200 OK:** Successfully retrieved all users.
+
+    ```json
+    {
+      "success": true,
+      "message": "Get all users successfully",
+      "data": [
+        {
+          "id": 1,
+          "fullName": "John Doe",
+          "email": "john@example.com",
+          "phone": "0987654321",
+          "username": "johndoe",
+          "role": "BORROWER",
+          "status": "ACTIVE",
+          "avatarUrl": "http://..."
+        }
+      ]
+    }
+    ```
+
+### Get user by ID
+
+- **Method:** `GET`
+- **Endpoint:** `/api/users/{id}`
+
+Retrieve details of a specific user by their ID.
+
+#### Parameters
+
+| Parameter | Type    | Description        |
+| :-------- | :------ | :----------------- |
+| `id`      | Integer | The ID of the user. |
+
+#### Responses
+
+-   **200 OK:** Successfully retrieved the user.
+-   **404 Not Found:** User not found.
+
+### Update user status
+
+- **Method:** `PUT`
+- **Endpoint:** `/api/users/{id}/status`
+
+Update the status of a user (e.g., ACTIVE, INACTIVE).
+
+#### Parameters
+
+| Parameter | Type    | Description                       |
+| :-------- | :------ | :-------------------------------- |
+| `id`      | Integer | The ID of the user.               |
+| `status`  | String  | The new status (ACTIVE, INACTIVE).|
+
+#### Responses
+
+-   **200 OK:** User status updated successfully.
+-   **400 Bad Request:** Invalid status value.
+-   **404 Not Found:** User not found.
+
+### Update user role
+
+- **Method:** `PUT`
+- **Endpoint:** `/api/users/{id}/role`
+
+Update the role of a user (e.g., BORROWER, STAFF).
+
+#### Parameters
+
+| Parameter | Type    | Description                       |
+| :-------- | :------ | :-------------------------------- |
+| `id`      | Integer | The ID of the user.               |
+| `role`    | String  | The new role (BORROWER, STAFF).   |
+
+#### Responses
+
+-   **200 OK:** User role updated successfully.
+-   **400 Bad Request:** Invalid role value.
+-   **404 Not Found:** User not found.

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/borrow-records")
 @RequiredArgsConstructor
@@ -26,5 +28,11 @@ public class BorrowRecordController {
     public ResponseEntity<ApiResponse<Void>> returnBook(@PathVariable Integer borrowId) {
         borrowRecordService.returnBook(borrowId);
         return ResponseEntity.ok(ApiResponse.success("Book returned successfully.", null));
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<ApiResponse<List<BorrowRecordResponse>>> getCurrentBorrowers() {
+        return ResponseEntity.ok(ApiResponse.success("Get current borrowers successfully", 
+                borrowRecordService.getCurrentBorrowers()));
     }
 }
