@@ -9,10 +9,12 @@ import java.util.List;
 public interface BorrowRequestService {
 
     List<BorrowRequest> getAllRequests();
+    
+    List<BorrowRequest> getPendingRequests();
 
     BorrowRequest sendRequest(CreateBorrowRequest request, String borrowerUsername);
 
-    BorrowRequest approveRequest(Integer id, ApproveBorrowRequest request, String staffUsername);
+    void approveRequest(Integer requestId, String staffUsername);
 
-    BorrowRequest rejectRequest(Integer id, String staffUsername);
+    void rejectRequest(Integer requestId, String staffUsername);
 }

@@ -40,6 +40,11 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
     }
 
     @Override
+    public List<BorrowRequest> getPendingRequests() {
+        return borrowRequestRepository.findByStatusOrderByRequestDateDesc(BorrowRequestStatus.PENDING.getValue());
+    }
+
+    @Override
     @Transactional
     public BorrowRequest sendRequest(CreateBorrowRequest request, String borrowerUsername) {
         User borrower = userRepository.findUserByUsername(borrowerUsername);
@@ -66,13 +71,13 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
 
     @Override
     @Transactional
-    public BorrowRequest approveRequest(Integer id, ApproveBorrowRequest request, String staffUsername) {
+    public void approveRequest(Integer requestId, String staffUsername) {
         User staff = userRepository.findUserByUsername(staffUsername);
         if (staff == null) {
             throw new ResourceNotFoundException("Staff not found");
         }
 
-        BorrowRequest borrowRequest = borrowRequestRepository.findById(id)
+        BorrowRequest borrowRequest = borrowRequestRepository.findById(requestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Borrow request not found"));
 
         if (!BorrowRequestStatus.PENDING.getValue().equals(borrowRequest.getStatus())) {
@@ -81,40 +86,45 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
 
         Book book = borrowRequest.getBook();
 
-        if (book.getAvailableQuantity() <= 0) {
-            throw new BadRequestException("Book is not available");
+        if (!BookStatus.AVAILABLE.getValue().equals(book.getStatus()) || book.getAvailableQuantity() <= 0) {
+            throw new BadRequestException("Book is not available for borrowing");
         }
 
+        // Update BorrowRequest
         borrowRequest.setStatus(BorrowRequestStatus.APPROVED.getValue());
         borrowRequest.setStaff(staff);
         borrowRequest.setResponseDate(Instant.now());
         borrowRequestRepository.save(borrowRequest);
 
+        // Create BorrowRecord
         BorrowRecord borrowRecord = new BorrowRecord();
         borrowRecord.setRequest(borrowRequest);
         borrowRecord.setBorrower(borrowRequest.getBorrower());
         borrowRecord.setBook(book);
         borrowRecord.setStaff(staff);
-        borrowRecord.setBorrowDate(toInstant(request.getBorrowDate()));
-        borrowRecord.setDueDate(toInstant(request.getDueDate()));
+        
+        Instant now = Instant.now();
+        borrowRecord.setBorrowDate(now);
+        // Assuming a loan period of 14 days if not configured elsewhere
+        borrowRecord.setDueDate(now.plusSeconds(14L * 24 * 60 * 60)); 
         borrowRecord.setStatus(BorrowRecordStatus.BORROWING.getValue());
+        
         borrowRecordRepository.save(borrowRecord);
 
+        // Update Book
         book.setAvailableQuantity(book.getAvailableQuantity() - 1);
         bookRepository.save(book);
-
-        return borrowRequest;
     }
 
     @Override
     @Transactional
-    public BorrowRequest rejectRequest(Integer id, String staffUsername) {
+    public void rejectRequest(Integer requestId, String staffUsername) {
         User staff = userRepository.findUserByUsername(staffUsername);
         if (staff == null) {
             throw new ResourceNotFoundException("Staff not found");
         }
 
-        BorrowRequest borrowRequest = borrowRequestRepository.findById(id)
+        BorrowRequest borrowRequest = borrowRequestRepository.findById(requestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Borrow request not found"));
 
         if (!BorrowRequestStatus.PENDING.getValue().equals(borrowRequest.getStatus())) {
@@ -125,7 +135,7 @@ public class BorrowRequestServiceImpl implements BorrowRequestService {
         borrowRequest.setStaff(staff);
         borrowRequest.setResponseDate(Instant.now());
 
-        return borrowRequestRepository.save(borrowRequest);
+        borrowRequestRepository.save(borrowRequest);
     }
 
     private Instant toInstant(LocalDate localDate) {

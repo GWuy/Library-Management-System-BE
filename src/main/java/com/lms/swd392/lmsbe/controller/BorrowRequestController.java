@@ -1,6 +1,7 @@
 package com.lms.swd392.lmsbe.controller;
 
 import com.lms.swd392.lmsbe.entity.BorrowRequest;
+import com.lms.swd392.lmsbe.exception.BadRequestException;
 import com.lms.swd392.lmsbe.mapper.BorrowRequestMapper;
 import com.lms.swd392.lmsbe.model.request.ApproveBorrowRequest;
 import com.lms.swd392.lmsbe.model.request.CreateBorrowRequest;
@@ -38,6 +39,15 @@ public class BorrowRequestController {
         return ResponseEntity.ok(ApiResponse.success("Get all borrow requests successfully", responses));
     }
 
+    @GetMapping("/pending")
+    public ResponseEntity<ApiResponse<List<BorrowRequestResponse>>> getPendingRequests() {
+        List<BorrowRequest> requests = borrowRequestService.getPendingRequests();
+        List<BorrowRequestResponse> responses = requests.stream()
+                .map(borrowRequestMapper::toBorrowRequestResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(ApiResponse.success("Get pending borrow requests successfully", responses));
+    }
+
     @PostMapping("/send")
     public ResponseEntity<ApiResponse<BorrowRequestResponse>> sendRequest(
             @Valid @RequestBody CreateBorrowRequest request) {
@@ -49,24 +59,37 @@ public class BorrowRequestController {
                         borrowRequestMapper.toBorrowRequestResponse(borrowRequest)));
     }
 
-    @PutMapping("/{id}/approve")
-    public ResponseEntity<ApiResponse<BorrowRequestResponse>> approveRequest(
-            @PathVariable Integer id,
-            @Valid @RequestBody ApproveBorrowRequest request) {
+    @PostMapping("/{requestId}/approve")
+    public ResponseEntity<ApiResponse<Void>> approveRequest(
+            @PathVariable Integer requestId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        BorrowRequest borrowRequest = borrowRequestService.approveRequest(id, request, username);
-        return ResponseEntity.ok(ApiResponse.success("Borrow request approved successfully",
-                borrowRequestMapper.toBorrowRequestResponse(borrowRequest)));
+        borrowRequestService.approveRequest(requestId, username);
+        return ResponseEntity.ok(ApiResponse.success("Borrow request approved successfully.", null));
+    }
+
+    @PostMapping("/{requestId}/reject")
+    public ResponseEntity<ApiResponse<Void>> rejectRequest(
+            @PathVariable Integer requestId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        borrowRequestService.rejectRequest(requestId, username);
+        return ResponseEntity.ok(ApiResponse.success("Borrow request rejected successfully.", null));
+    }
+
+    @PutMapping("/{id}/approve")
+    @Deprecated
+    public ResponseEntity<ApiResponse<BorrowRequestResponse>> approveRequestDeprecated(
+            @PathVariable Integer id,
+            @Valid @RequestBody ApproveBorrowRequest request) {
+        // Keeping this for backward compatibility if needed, but updated to use new service logic or just throw error
+        throw new BadRequestException("This endpoint is deprecated. Use POST /api/borrow-requests/{requestId}/approve instead.");
     }
 
     @PutMapping("/{id}/reject")
-    public ResponseEntity<ApiResponse<BorrowRequestResponse>> rejectRequest(
+    @Deprecated
+    public ResponseEntity<ApiResponse<BorrowRequestResponse>> rejectRequestDeprecated(
             @PathVariable Integer id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        BorrowRequest borrowRequest = borrowRequestService.rejectRequest(id, username);
-        return ResponseEntity.ok(ApiResponse.success("Borrow request rejected successfully",
-                borrowRequestMapper.toBorrowRequestResponse(borrowRequest)));
+        throw new BadRequestException("This endpoint is deprecated. Use POST /api/borrow-requests/{requestId}/reject instead.");
     }
 }

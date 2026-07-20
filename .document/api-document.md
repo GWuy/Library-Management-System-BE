@@ -598,3 +598,96 @@ Process the return of a borrowed book.
     }
     ```
 ---
+
+## Borrow Request API
+
+### Get all pending borrow requests
+
+- **Method:** `GET`
+- **Endpoint:** `/api/borrow-requests/pending`
+
+Retrieve all borrow requests that are currently in PENDING status.
+
+#### Responses
+
+-   **200 OK:** Successfully retrieved pending requests.
+
+    ```json
+    {
+      "success": true,
+      "message": "Get pending borrow requests successfully",
+      "data": [
+        {
+          "id": 1,
+          "bookTitle": "Clean Code",
+          "bookId": 1,
+          "borrowerName": "John Doe",
+          "borrowerId": 1,
+          "staffName": null,
+          "staffId": null,
+          "requestDate": "2023-10-27T10:00:00Z",
+          "responseDate": null,
+          "status": "PENDING",
+          "note": "Need for project"
+        }
+      ]
+    }
+    ```
+
+### Approve a borrow request
+
+- **Method:** `POST`
+- **Endpoint:** `/api/borrow-requests/{requestId}/approve`
+
+Approve a pending borrow request and create a corresponding borrow record.
+
+#### Parameters
+
+| Parameter | Type    | Description                   |
+| :-------- | :------ | :---------------------------- |
+| `requestId` | Integer | The ID of the borrow request. |
+
+#### Responses
+
+-   **200 OK:** Borrow request approved successfully.
+
+    ```json
+    {
+      "success": true,
+      "message": "Borrow request approved successfully.",
+      "data": null
+    }
+    ```
+
+-   **400 Bad Request:** Request is not pending or book is not available.
+-   **404 Not Found:** Borrow request or staff not found.
+
+### Reject a borrow request
+
+- **Method:** `POST`
+- **Endpoint:** `/api/borrow-requests/{requestId}/reject`
+
+Reject a pending borrow request.
+
+#### Parameters
+
+| Parameter | Type    | Description                   |
+| :-------- | :------ | :---------------------------- |
+| `requestId` | Integer | The ID of the borrow request. |
+
+#### Responses
+
+-   **200 OK:** Borrow request rejected successfully.
+
+    ```json
+    {
+      "success": true,
+      "message": "Borrow request rejected successfully.",
+      "data": null
+    }
+    ```
+
+-   **400 Bad Request:** Request is not pending.
+-   **404 Not Found:** Borrow request or staff not found.
+
+---
