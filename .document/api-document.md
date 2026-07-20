@@ -691,3 +691,56 @@ Reject a pending borrow request.
 -   **404 Not Found:** Borrow request or staff not found.
 
 ---
+
+## Lost Book Report API
+
+### Report a lost book
+
+- **Method:** `POST`
+- **Endpoint:** `/api/lost-book-reports`
+- **Content-Type:** `application/json`
+
+This endpoint allows a borrower to report a borrowed book as lost.
+
+#### Request Body (JSON)
+
+| Field         | Type    | Description                               | Constraints |
+| :------------ | :------ | :---------------------------------------- | :---------- |
+| `borrowId`    | Integer | The ID of the borrow record.              | Required.   |
+| `description` | String  | A description of how the book was lost.   | Required.   |
+
+#### Example Request
+
+```json
+{
+  "borrowId": 1,
+  "description": "Book was lost during travel."
+}
+```
+
+#### Responses
+
+-   **200 OK:** Lost book report created successfully.
+
+    ```json
+    {
+      "success": true,
+      "message": "Lost book report created successfully.",
+      "data": null
+    }
+    ```
+
+-   **400 Bad Request:** Cannot report lost book (e.g., status is not BORROWING).
+
+    ```json
+    {
+      "success": false,
+      "message": "Cannot report lost book.",
+      "timestamp": "2023-10-27T11:00:00",
+      "path": "/api/lost-book-reports"
+    }
+    ```
+
+-   **404 Not Found:** Borrow record not found for the current user.
+
+---
