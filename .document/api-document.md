@@ -510,4 +510,91 @@ This endpoint deletes a book by its ID.
     ```
 
 -   **404 Not Found:** The book with the specified ID was not found.
+
+---
+
+## Borrow Record API
+
+### Search active borrow record
+
+- **Method:** `GET`
+- **Endpoint:** `/api/borrow-records/search`
+
+Search for an active (BORROWING) record for a specific borrower and book.
+
+#### Query Parameters
+
+| Parameter | Type    | Description           | Constraints |
+| :-------- | :------ | :-------------------- | :---------- |
+| `borrowerId` | Integer | ID of the borrower. | Required.   |
+| `bookId`   | Integer | ID of the book.       | Required.   |
+
+#### Responses
+
+-   **200 OK:** Borrow record found.
+
+    ```json
+    {
+      "success": true,
+      "message": "Borrow record found.",
+      "data": {
+        "id": 1,
+        "borrowerId": 1,
+        "borrowerName": "John Doe",
+        "bookId": 1,
+        "bookTitle": "Clean Code",
+        "borrowDate": "2023-10-27T10:00:00Z",
+        "dueDate": "2023-11-10T10:00:00Z",
+        "returnDate": null,
+        "status": "BORROWING"
+      }
+    }
+    ```
+
+-   **404 Not Found:** Borrow record not found or already returned.
+
+    ```json
+    {
+      "success": false,
+      "message": "Borrow record not found or already returned.",
+      "timestamp": "2023-10-27T11:00:00",
+      "path": "/api/borrow-records/search"
+    }
+    ```
+
+### Return a book
+
+- **Method:** `POST`
+- **Endpoint:** `/api/borrow-records/{borrowId}/return`
+
+Process the return of a borrowed book.
+
+#### Parameters
+
+| Parameter | Type    | Description            |
+| :-------- | :------ | :--------------------- |
+| `borrowId` | Integer | The ID of the borrow record. |
+
+#### Responses
+
+-   **200 OK:** Book returned successfully.
+
+    ```json
+    {
+      "success": true,
+      "message": "Book returned successfully.",
+      "data": null
+    }
+    ```
+
+-   **404 Not Found:** Borrow record not found or already returned.
+
+    ```json
+    {
+      "success": false,
+      "message": "Borrow record not found or already returned.",
+      "timestamp": "2023-10-27T11:00:00",
+      "path": "/api/borrow-records/1/return"
+    }
+    ```
 ---
