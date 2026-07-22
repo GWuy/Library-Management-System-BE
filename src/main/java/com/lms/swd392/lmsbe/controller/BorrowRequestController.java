@@ -8,6 +8,8 @@ import com.lms.swd392.lmsbe.model.request.CreateBorrowRequest;
 import com.lms.swd392.lmsbe.model.response.ApiResponse;
 import com.lms.swd392.lmsbe.model.response.BorrowRequestResponse;
 import com.lms.swd392.lmsbe.service.BorrowRequestService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +27,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/borrow-requests")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Borrow Request", description = "Các API quản lý yêu cầu mượn sách")
 public class BorrowRequestController {
 
     BorrowRequestService borrowRequestService;
     BorrowRequestMapper borrowRequestMapper;
 
+    @Operation(summary = "Lấy tất cả yêu cầu mượn sách", description = "Trả về danh sách tất cả các yêu cầu mượn sách trong hệ thống")
     @GetMapping
     public ResponseEntity<ApiResponse<List<BorrowRequestResponse>>> getAllRequests() {
         List<BorrowRequest> requests = borrowRequestService.getAllRequests();
@@ -39,6 +43,7 @@ public class BorrowRequestController {
         return ResponseEntity.ok(ApiResponse.success("Get all borrow requests successfully", responses));
     }
 
+    @Operation(summary = "Lấy các yêu cầu đang chờ duyệt", description = "Trả về danh sách các yêu cầu mượn sách có trạng thái PENDING")
     @GetMapping("/pending")
     public ResponseEntity<ApiResponse<List<BorrowRequestResponse>>> getPendingRequests() {
         List<BorrowRequest> requests = borrowRequestService.getPendingRequests();
@@ -48,6 +53,7 @@ public class BorrowRequestController {
         return ResponseEntity.ok(ApiResponse.success("Get pending borrow requests successfully", responses));
     }
 
+    @Operation(summary = "Gửi yêu cầu mượn sách", description = "Người dùng gửi yêu cầu mượn một hoặc nhiều cuốn sách")
     @PostMapping("/send")
     public ResponseEntity<ApiResponse<BorrowRequestResponse>> sendRequest(
             @Valid @RequestBody CreateBorrowRequest request) {
@@ -59,6 +65,7 @@ public class BorrowRequestController {
                         borrowRequestMapper.toBorrowRequestResponse(borrowRequest)));
     }
 
+    @Operation(summary = "Phê duyệt yêu cầu mượn", description = "Thủ thư phê duyệt yêu cầu mượn sách của người dùng")
     @PostMapping("/{requestId}/approve")
     public ResponseEntity<ApiResponse<Void>> approveRequest(
             @PathVariable Integer requestId) {
@@ -68,6 +75,7 @@ public class BorrowRequestController {
         return ResponseEntity.ok(ApiResponse.success("Borrow request approved successfully.", null));
     }
 
+    @Operation(summary = "Từ chối yêu cầu mượn", description = "Thủ thư từ chối yêu cầu mượn sách của người dùng")
     @PostMapping("/{requestId}/reject")
     public ResponseEntity<ApiResponse<Void>> rejectRequest(
             @PathVariable Integer requestId) {
@@ -77,19 +85,4 @@ public class BorrowRequestController {
         return ResponseEntity.ok(ApiResponse.success("Borrow request rejected successfully.", null));
     }
 
-    @PutMapping("/{id}/approve")
-    @Deprecated
-    public ResponseEntity<ApiResponse<BorrowRequestResponse>> approveRequestDeprecated(
-            @PathVariable Integer id,
-            @Valid @RequestBody ApproveBorrowRequest request) {
-        // Keeping this for backward compatibility if needed, but updated to use new service logic or just throw error
-        throw new BadRequestException("This endpoint is deprecated. Use POST /api/borrow-requests/{requestId}/approve instead.");
-    }
-
-    @PutMapping("/{id}/reject")
-    @Deprecated
-    public ResponseEntity<ApiResponse<BorrowRequestResponse>> rejectRequestDeprecated(
-            @PathVariable Integer id) {
-        throw new BadRequestException("This endpoint is deprecated. Use POST /api/borrow-requests/{requestId}/reject instead.");
-    }
 }

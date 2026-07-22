@@ -10,6 +10,8 @@ import com.lms.swd392.lmsbe.model.response.LoginResponse;
 import com.lms.swd392.lmsbe.model.response.RegisterResponse;
 import com.lms.swd392.lmsbe.service.AuthService;
 import com.lms.swd392.lmsbe.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +27,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("api/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "Authentication", description = "Các API liên quan đến xác thực và quản lý tài khoản")
 public class AuthController {
 
     UserService userService;
     UserMapper userMapper;
     AuthService authService;
 
+    @Operation(summary = "Đăng ký người dùng mới", description = "Tạo tài khoản mới với thông tin và ảnh đại diện")
     @PostMapping(value = "/register", consumes = "multipart/form-data")
     public ResponseEntity<ApiResponse<RegisterResponse>> register(
             @RequestPart("data") @Valid RegisterRequest request,
@@ -42,6 +46,7 @@ public class AuthController {
                 .body(ApiResponse.success("Register successfully", response));
     }
 
+    @Operation(summary = "Đăng nhập", description = "Xác thực người dùng và trả về JWT token")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
             @RequestBody @Valid LoginRequest request
@@ -50,6 +55,7 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("Login successfully", response));
     }
 
+    @Operation(summary = "Làm mới token", description = "Sử dụng Refresh Token để lấy Access Token mới")
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(
             @RequestBody @Valid RefreshTokenRequest request
@@ -58,6 +64,7 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("Token refreshed successfully", response));
     }
 
+    @Operation(summary = "Đăng xuất", description = "Hủy phiên làm việc của người dùng")
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
