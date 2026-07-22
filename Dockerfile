@@ -1,4 +1,12 @@
-FROM ubuntu:latest
-LABEL authors="BNK-HuyBG2"
+# Stage 1: Build
+FROM gradle:8.12-jdk21 AS build
+WORKDIR /app
+COPY . .
+RUN gradle build --no-daemon -x test
 
-ENTRYPOINT ["top", "-b"]
+# Stage 2: Run
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
